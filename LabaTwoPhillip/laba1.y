@@ -10,26 +10,29 @@ void yyerror(const char* s);
 char *operandOne = nullptr;
 char *operandTwo = nullptr;
 %} 
+%union
+{
+    struct
+    {
+        std::string* line = nullptr;
+        int precedence = 0;
+    }expression_type;
+}
+%type <expression_type> S E T F
 %token T_NEWLINE
 %start accept 
+%left '+'
+%left '*'
 %% 
 accept: S {printf("Success\n");} 
 ; 
-S: E {printf("%s\n", $$);};
+S: E {printf("%s\n", *($$.line));};
 E: E '+' T
 |
 T
 ;
 T: T '*' F  {
-                if(operandOne == nullptr)
-                {
-                    operandOne = new char($1);
-                }
-                if(operandTwo == nullptr)
-                {
-                    operandTwo = new char($3);
-                }
-                $$ = T '*' $3;
+
             }
 |
 F {$$ = $1;}
